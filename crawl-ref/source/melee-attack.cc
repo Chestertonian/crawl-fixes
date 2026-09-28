@@ -45,6 +45,7 @@
 #include "nearby-danger.h"
 #include "religion.h"
 #include "shout.h"
+#include "spl-clouds.h" // ghost crab claws
 #include "spl-damage.h"
 #include "spl-goditem.h"
 #include "spl-monench.h" // is_valid_tempering_target
@@ -1126,6 +1127,14 @@ bool melee_attack::handle_phase_damaged()
             && defender->is_monster())
         {
             _inflict_deathly_blight(*(defender->as_monster()));
+        }
+        if (you.unrand_equipped(UNRAND_CRAB_CLAWS) && defender->alive()
+            && defender->is_monster()
+            && x_chance_in_y(damage_done, damage_done + 15)
+            && !you.allies_forbidden())
+        {
+            big_cloud(CLOUD_SPECTRAL, &you, defender->pos(),
+                random_range(12, 20), 4 + random2(5));
         }
         if (you.form == transformation::sun_scarab && defender->alive() && coinflip())
             sear_defender();
@@ -2685,7 +2694,7 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
             mprf("You %s %s%s.",
                     aux_verb.c_str(),
                     defender->name(DESC_THE).c_str(),
-                    you.can_see(*defender) ? ", but do no damage" : "");
+                    you.can_see(*defender) ? " but do no damage" : "");
         }
 
         if (atk == UNAT_MEDUSA_STINGER)

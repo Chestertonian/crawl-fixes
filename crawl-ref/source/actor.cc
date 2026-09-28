@@ -42,7 +42,8 @@ bool actor::will_trigger_shaft() const
            // let's pretend that they always make their saving roll
            && !(is_monster()
                 && (mons_is_elven_twin(static_cast<const monster* >(this))
-                    || as_monster()->type == MONS_ORC_APOSTLE));
+                    || as_monster()->type == MONS_ORC_APOSTLE
+                    || testbits(as_monster()->flags, MF_PENDING_REVIVAL)));
 }
 
 level_id actor::shaft_dest() const
@@ -768,7 +769,7 @@ void actor::constriction_damage_defender(actor &defender)
     if (damage <= 0 && is_player()
         && you.can_see(defender))
     {
-        exclamations = ", but do no damage.";
+        exclamations = " but do no damage.";
     }
     else
         exclamations = attack_strength_punctuation(damage);
